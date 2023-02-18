@@ -1,6 +1,7 @@
 const handleAsync = require('async-error-handler')
 const moment = require('moment')
 const Expenditure = require('../models/expenditure')
+const Category = require('../models/category')
 
 const fetchExpenditure = handleAsync(
   async (req, res) => {
@@ -44,11 +45,24 @@ const fetchExpenditureByYear = handleAsync(
 
 const addExpenditure = handleAsync(
   async (req, res) => {
-    const expenditure = await Expenditure.create({
-      ...req.body,
-      date: new Date(req.body?.date),
-    })
-    res.status(200).send(expenditure)
+    const category = await Category.findOne({ title: req.body?.category })
+    if (!category) {
+      randomCategory = await Category.findOne({ title: 'Random' })
+      const expenditure = await Expenditure.create({
+        ...req.body,
+        date: new Date(req.body?.date),
+        category: randomCategory._id,
+      })
+      res.status(200).send(expenditure)
+    } else {
+      category = await Category.findOne({ title: req.body?.category })
+      const expenditure = await Expenditure.create({
+        ...req.body,
+        date: new Date(req.body?.date),
+        category: category._id,
+      })
+      res.status(200).send(expenditure)
+    }
   },
   (error) => {
     throw new Error(error)
