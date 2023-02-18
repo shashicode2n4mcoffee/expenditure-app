@@ -1,10 +1,11 @@
 const handleAsync = require('async-error-handler')
 const moment = require('moment')
 const Expenditure = require('../models/expenditure')
+const Category = require('../models/category')
 
 const fetchExpenditure = handleAsync(
   async (req, res) => {
-    const list = await Expenditure.find()
+    const list = await Expenditure.find().populate('category')
     res.status(200).send(list)
   },
   (error) => {
@@ -19,7 +20,7 @@ const fetchExpenditureByMonthYear = handleAsync(
         $gte: new Date(req.query?.from),
         $lte: new Date(req.query?.to),
       },
-    })
+    }).populate('category')
     res.status(200).send(list)
   },
   (error) => {
@@ -34,7 +35,7 @@ const fetchExpenditureByYear = handleAsync(
         $gte: new Date(req.query?.from),
         $lte: new Date(req.body?.$lte),
       },
-    })
+    }).populate('category')
     res.status(200).send(list)
   },
   (error) => {
@@ -44,11 +45,24 @@ const fetchExpenditureByYear = handleAsync(
 
 const addExpenditure = handleAsync(
   async (req, res) => {
-    const expenditure = await Expenditure.create({
-      ...req.body,
-      date: new Date(req.body?.date),
-    })
-    res.status(200).send(expenditure)
+    const category = await Category.findOne({ title: req.body?.category })
+    if (!category) {
+      randomCategory = await Category.findOne({ title: 'Random' })
+      const expenditure = await Expenditure.create({
+        ...req.body,
+        date: new Date(req.body?.date),
+        category: randomCategory._id,
+      })
+      res.status(200).send(expenditure)
+    } else {
+      category = await Category.findOne({ title: req.body?.category })
+      const expenditure = await Expenditure.create({
+        ...req.body,
+        date: new Date(req.body?.date),
+        category: category._id,
+      })
+      res.status(200).send(expenditure)
+    }
   },
   (error) => {
     throw new Error(error)
@@ -77,15 +91,6 @@ const deleteExpenditure = handleAsync(
       _id: req.params.id,
     })
     res.status(200).send(deletedExpenditure)
-  },
-  (error) => {
-    throw new Error(error)
-  }
-)
-
-const addCategory = handleAsync(
-  async (req, res) => {
-    
   },
   (error) => {
     throw new Error(error)

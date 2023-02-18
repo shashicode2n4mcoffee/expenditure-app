@@ -13,8 +13,8 @@ var expenditureSchema = new mongoose.Schema(
       unique: true,
     },
     category: {
-      type: String,
-      default: 'Random',
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Category',
     },
     amount: {
       type: Number,

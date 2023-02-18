@@ -3,7 +3,8 @@ const express = require('express')
 const bodyParser = require('body-parser')
 
 // LOCAL IMPORTS
-const router = require('./routes/expenditureRouter')
+const expenditureRouter = require('./routes/expenditureRouter')
+const categoryRouter = require('./routes/categoryRoutes')
 const dbConnect = require('./config/db')
 
 // DECLARATIONS
@@ -15,7 +16,8 @@ dbConnect()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
-app.use('/api/v1', router)
+app.use('/api/v1', expenditureRouter)
+app.use('/api/v1', categoryRouter)
 
 app.get('/api/v1', (req, res) => {
   res.status(200).send('Hello world')
