@@ -55,11 +55,11 @@ const addExpenditure = handleAsync(
       })
       res.status(200).send(expenditure)
     } else {
-      category = await Category.findOne({ title: req.body?.category })
+      reqCategory = await Category.findOne({ title: req.body?.category })
       const expenditure = await Expenditure.create({
         ...req.body,
         date: new Date(req.body?.date),
-        category: category._id,
+        category: reqCategory._id,
       })
       res.status(200).send(expenditure)
     }
