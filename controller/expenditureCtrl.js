@@ -83,15 +83,6 @@ const deleteExpenditure = handleAsync(
   }
 )
 
-const addCategory = handleAsync(
-  async (req, res) => {
-    
-  },
-  (error) => {
-    throw new Error(error)
-  }
-)
-
 module.exports = {
   fetchExpenditure,
   addExpenditure,
