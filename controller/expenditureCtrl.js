@@ -5,7 +5,7 @@ const Category = require('../models/category')
 
 const fetchExpenditure = handleAsync(
   async (req, res) => {
-    const list = await Expenditure.find()
+    const list = await Expenditure.find().populate('category')
     res.status(200).send(list)
   },
   (error) => {
@@ -20,7 +20,7 @@ const fetchExpenditureByMonthYear = handleAsync(
         $gte: new Date(req.query?.from),
         $lte: new Date(req.query?.to),
       },
-    })
+    }).populate('category')
     res.status(200).send(list)
   },
   (error) => {
@@ -35,7 +35,7 @@ const fetchExpenditureByYear = handleAsync(
         $gte: new Date(req.query?.from),
         $lte: new Date(req.body?.$lte),
       },
-    })
+    }).populate('category')
     res.status(200).send(list)
   },
   (error) => {
